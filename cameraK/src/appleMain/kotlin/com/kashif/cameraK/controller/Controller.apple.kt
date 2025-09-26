@@ -180,6 +180,9 @@ actual class CameraController(
             it.initialize(this)
         }
     }
+    actual fun setLinearZoom(zoom: Float) {
+        // TODO
+    }
 
     // Extension function to map FlashMode enum to AVCaptureFlashMode
     private fun FlashMode.toAVCaptureFlashMode(): AVCaptureFlashMode = when (this) {
