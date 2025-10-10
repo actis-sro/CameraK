@@ -28,6 +28,7 @@ actual class CameraController(
     private var imageCaptureListeners = mutableListOf<(ByteArray) -> Unit>()
     private var metadataOutput = AVCaptureMetadataOutput()
     private var metadataObjectsDelegate: AVCaptureMetadataOutputObjectsDelegateProtocol? = null
+    private var captureDevice: AVCaptureDevice? = null
 
 
     override fun viewDidLoad() {
@@ -45,6 +46,8 @@ actual class CameraController(
         }
 
         startSession()
+
+        captureDevice = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo)
 
         customCameraController.onPhotoCapture = { image ->
             image?.let {
@@ -180,8 +183,18 @@ actual class CameraController(
             it.initialize(this)
         }
     }
+
+    @OptIn(ExperimentalForeignApi::class)
     actual fun setLinearZoom(zoom: Float) {
-        // TODO
+        val device = captureDevice ?: return
+        val minZoom = device.minAvailableVideoZoomFactor
+        val maxZoom = device.maxAvailableVideoZoomFactor
+
+        val targetZoom = minZoom + (maxZoom - minZoom) * zoom.coerceIn(0f, 1f)
+
+        device.lockForConfiguration(null)
+        device.rampToVideoZoomFactor(targetZoom, withRate = 10.0F)
+        device.unlockForConfiguration()
     }
 
     // Extension function to map FlashMode enum to AVCaptureFlashMode

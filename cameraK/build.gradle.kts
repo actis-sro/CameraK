@@ -1,5 +1,4 @@
 import com.vanniktech.maven.publish.SonatypeHost
-import org.jetbrains.compose.compose
 
 plugins {
     alias(libs.plugins.multiplatform)
@@ -89,14 +88,22 @@ android {
     }
 }
 
+publishing {
+    repositories {
+        maven(uri(project.findProperty("ActisUrl") as Any)) {
+            name = "Actis"
+            isAllowInsecureProtocol = true
+            credentials(PasswordCredentials::class)
+        }
+    }
+}
+
 mavenPublishing {
     coordinates(
-        groupId = "io.github.kashif-mehmood-km",
+        groupId = "cz.ferdigo",
         artifactId = "camerak",
-        version = "0.0.7"
+        version = "1.0.9"
     )
-
-
 
     pom {
         name.set("CameraK")
@@ -127,6 +134,6 @@ mavenPublishing {
     // Configure publishing to Maven Central
     publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
 
-    // Enable GPG signing for all publications
-    signAllPublications()
+//    // Enable GPG signing for all publications
+//    signAllPublications()
 }
