@@ -32,7 +32,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            api(projects.cameraK)
+            implementation(libs.camerak)
             implementation(libs.atomicfu)
         }
 
@@ -75,11 +75,21 @@ android {
     }
 }
 
+publishing {
+    repositories {
+        maven(uri(project.findProperty("ActisUrl") as Any)) {
+            name = "Actis"
+            isAllowInsecureProtocol = true
+            credentials(PasswordCredentials::class)
+        }
+    }
+}
+
 mavenPublishing {
     coordinates(
-        groupId = "io.github.kashif-mehmood-km",
+        groupId = "cz.ferdigo",
         artifactId = "qr_scanner_plugin",
-        version = "0.0.2"
+        version = "1.0.2"
     )
 
 
@@ -114,5 +124,5 @@ mavenPublishing {
     publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
 
     // Enable GPG signing for all publications
-    signAllPublications()
+    // signAllPublications()
 }
