@@ -13,6 +13,7 @@ import platform.UIKit.UIImagePNGRepresentation
 import platform.UIKit.UIViewController
 import platform.darwin.dispatch_get_main_queue
 import kotlin.coroutines.resume
+import kotlin.math.pow
 
 actual class CameraController(
     internal var flashMode: FlashMode,
@@ -190,10 +191,11 @@ actual class CameraController(
         val minZoom = device.minAvailableVideoZoomFactor
         val maxZoom = device.maxAvailableVideoZoomFactor
 
-        val targetZoom = minZoom + (maxZoom - minZoom) * zoom.coerceIn(0f, 1f)
+        val curvedZoom = zoom.coerceIn(0f, 1f).pow(2)
+        val targetZoom = minZoom + (maxZoom - minZoom) * curvedZoom
 
         device.lockForConfiguration(null)
-        device.rampToVideoZoomFactor(targetZoom, withRate = 10.0F)
+        device.rampToVideoZoomFactor(targetZoom, withRate = 3.0F)
         device.unlockForConfiguration()
     }
 
