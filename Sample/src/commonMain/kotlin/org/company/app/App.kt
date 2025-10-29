@@ -16,9 +16,11 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.Slider
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -201,6 +203,20 @@ fun CameraScreen(cameraController: CameraController, imageSaverPlugin: ImageSave
                         }
                     )
                 }
+              Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+              ) {
+                Text(text = "Zoom")
+                val zoom = remember { mutableStateOf(0f) }
+                Slider(
+                  value = zoom.value,
+                  onValueChange = {
+                    zoom.value = it
+                    cameraController.setLinearZoom(it)
+                  }
+                )
+              }
             }
 
             // Camera Lens Toggle Button

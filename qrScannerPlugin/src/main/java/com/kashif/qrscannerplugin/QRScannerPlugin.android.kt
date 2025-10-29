@@ -14,7 +14,6 @@ import com.kashif.cameraK.controller.CameraController
 import kotlinx.atomicfu.AtomicBoolean
 
 fun CameraController.enableQrCodeScanner(onQrScanner: (String) -> Unit) {
-    Log.e("QRScanner", "Enabling QR code scanner")
     imageAnalyzer = ImageAnalysis.Builder()
         .setTargetRotation(rotation.toSurfaceRotation())
         .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
@@ -33,7 +32,6 @@ private class QRCodeAnalyzer(private val onQrScanner: (String) -> Unit) : ImageA
 
     @androidx.annotation.OptIn(ExperimentalGetImage::class)
     override fun analyze(imageProxy: ImageProxy) {
-        Log.e("QRScanner", "QRCodeAnalyzer.analyze called")
         val image = imageProxy.image ?: return
         if (image.format != ImageFormat.YUV_420_888) {
             Log.e("QRScanner", "Unsupported image format: ${image.format}")
@@ -53,7 +51,6 @@ private class QRCodeAnalyzer(private val onQrScanner: (String) -> Unit) : ImageA
             val result = reader.decode(bitmap)
            onQrScanner(result.text)
         } catch (e: Exception) {
-            Log.e("QRScanner", "No QR Code detected: ${e.message}")
         } finally {
             imageProxy.close()
         }
@@ -64,6 +61,5 @@ actual fun startScanning(
     controller: CameraController,
     onQrScanner: (String) -> Unit
 ) {
-    Log.e("QRScanner", "startScanning called")
     controller.enableQrCodeScanner(onQrScanner)
 }

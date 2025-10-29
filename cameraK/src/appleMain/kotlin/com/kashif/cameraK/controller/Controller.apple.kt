@@ -13,6 +13,7 @@ import platform.UIKit.UIImagePNGRepresentation
 import platform.UIKit.UIViewController
 import platform.darwin.dispatch_get_main_queue
 import kotlin.coroutines.resume
+import kotlin.math.pow
 
 actual class CameraController(
     internal var flashMode: FlashMode,
@@ -28,6 +29,7 @@ actual class CameraController(
     private var imageCaptureListeners = mutableListOf<(ByteArray) -> Unit>()
     private var metadataOutput = AVCaptureMetadataOutput()
     private var metadataObjectsDelegate: AVCaptureMetadataOutputObjectsDelegateProtocol? = null
+    private var captureDevice: AVCaptureDevice? = null
 
 
     override fun viewDidLoad() {
@@ -45,6 +47,8 @@ actual class CameraController(
         }
 
         startSession()
+
+        captureDevice = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo)
 
         customCameraController.onPhotoCapture = { image ->
             image?.let {
@@ -179,6 +183,20 @@ actual class CameraController(
         plugins.forEach {
             it.initialize(this)
         }
+    }
+
+    @OptIn(ExperimentalForeignApi::class)
+    actual fun setLinearZoom(zoom: Float) {
+        val device = captureDevice ?: return
+        val minZoom = device.minAvailableVideoZoomFactor
+        val maxZoom = device.maxAvailableVideoZoomFactor
+
+        val curvedZoom = zoom.coerceIn(0f, 1f).pow(2)
+        val targetZoom = minZoom + (maxZoom - minZoom) * curvedZoom
+
+        device.lockForConfiguration(null)
+        device.rampToVideoZoomFactor(targetZoom, withRate = 3.0F)
+        device.unlockForConfiguration()
     }
 
     // Extension function to map FlashMode enum to AVCaptureFlashMode

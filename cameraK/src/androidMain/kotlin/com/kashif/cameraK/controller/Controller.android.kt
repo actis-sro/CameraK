@@ -261,6 +261,10 @@ actual class CameraController(
         plugins.forEach { it.initialize(this) }
     }
 
+    actual fun setLinearZoom(zoom: Float) {
+      camera?.cameraControl?.setLinearZoom(zoom)
+    }
+
     // Helper Methods
     private fun createTempFile(): File {
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())

@@ -69,4 +69,6 @@ expect class CameraController {
      */
     fun addImageCaptureListener(listener: (ByteArray) -> Unit)
     fun initializeControllerPlugins()
+
+    fun setLinearZoom(zoom: Float)
 }
