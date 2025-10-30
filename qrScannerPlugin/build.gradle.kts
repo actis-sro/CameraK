@@ -56,10 +56,10 @@ kotlin {
 
 android {
     namespace = "com.kashif.qr_scanner_plugin"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
-        minSdk = 21
+        minSdk = 24
     }
 
     publishing {

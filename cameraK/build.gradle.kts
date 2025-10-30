@@ -69,10 +69,10 @@ kotlin {
 
 android {
     namespace = "com.kashif.cameraK"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
-        minSdk = 21
+        minSdk = 24
     }
 
     publishing {
@@ -102,7 +102,7 @@ mavenPublishing {
     coordinates(
         groupId = "cz.ferdigo",
         artifactId = "camerak",
-        version = "1.1.0"
+        version = "1.1.1"
     )
 
     pom {
