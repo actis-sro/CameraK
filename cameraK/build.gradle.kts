@@ -102,7 +102,7 @@ mavenPublishing {
     coordinates(
         groupId = "cz.ferdigo",
         artifactId = "camerak",
-        version = "1.1.1"
+        version = "1.1.2"
     )
 
     pom {

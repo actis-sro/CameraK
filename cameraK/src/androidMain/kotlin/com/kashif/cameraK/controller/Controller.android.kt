@@ -293,4 +293,9 @@ actual class CameraController(
         Rotation.ROTATION_180 -> android.view.Surface.ROTATION_180
         Rotation.ROTATION_270 -> android.view.Surface.ROTATION_270
     }
+
+    actual fun getMaxZoomRatio(): Float {
+        val zoomState = camera?.cameraInfo?.zoomState?.value
+        return zoomState?.maxZoomRatio ?: 1.0f
+    }
 }
