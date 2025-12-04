@@ -71,4 +71,6 @@ expect class CameraController {
     fun initializeControllerPlugins()
 
     fun setLinearZoom(zoom: Float)
+
+    fun getMaxZoomRatio(): Float
 }

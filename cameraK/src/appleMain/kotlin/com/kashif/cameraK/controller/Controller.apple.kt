@@ -219,6 +219,10 @@ actual class CameraController(
         TorchMode.OFF -> AVCaptureTorchModeOff
         TorchMode.AUTO -> AVCaptureTorchModeAuto
     }
+
+    actual fun getMaxZoomRatio(): Float {
+        return captureDevice?.activeFormat?.videoMaxZoomFactor?.toFloat() ?: 1.0f
+    }
 }
 
 
