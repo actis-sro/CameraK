@@ -73,4 +73,6 @@ expect class CameraController {
     fun setLinearZoom(zoom: Float)
 
     fun getMaxZoomRatio(): Float
+
+    fun getMinZoomRatio(): Float
 }

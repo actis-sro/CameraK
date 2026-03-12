@@ -48,7 +48,7 @@ actual class CameraController(
 
         startSession()
 
-        captureDevice = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo)
+        captureDevice = customCameraController.currentCamera
 
         customCameraController.onPhotoCapture = { image ->
             image?.let {
@@ -156,6 +156,7 @@ actual class CameraController(
 
     actual fun toggleCameraLens() {
         customCameraController.switchCamera()
+        captureDevice = customCameraController.currentCamera
     }
 
     actual fun setCameraRotation(rotation: Rotation) {
@@ -188,14 +189,26 @@ actual class CameraController(
     @OptIn(ExperimentalForeignApi::class)
     actual fun setLinearZoom(zoom: Float) {
         val device = captureDevice ?: return
-        val minZoom = device.minAvailableVideoZoomFactor
-        val maxZoom = device.maxAvailableVideoZoomFactor
 
-        val curvedZoom = zoom.coerceIn(0f, 1f).pow(2)
-        val targetZoom = minZoom + (maxZoom - minZoom) * curvedZoom
+        val minUI = getMinZoomRatio()
+        val maxUI = getMaxZoomRatio()
+
+        val uiRatio = minUI + (zoom.coerceIn(0f, 1f) * (maxUI - minUI))
+
+        val type = device.deviceType
+        val avTargetFactor = if (type == AVCaptureDeviceTypeBuiltInTripleCamera || type == AVCaptureDeviceTypeBuiltInDualWideCamera) {
+            uiRatio * 2.0f
+        } else {
+            uiRatio
+        }
+
+        val safeTarget = avTargetFactor.coerceIn(
+            device.minAvailableVideoZoomFactor.toFloat(),
+            device.maxAvailableVideoZoomFactor.toFloat()
+        )
 
         device.lockForConfiguration(null)
-        device.rampToVideoZoomFactor(targetZoom, withRate = 3.0F)
+        device.rampToVideoZoomFactor(safeTarget.toDouble(), withRate = 3.0F)
         device.unlockForConfiguration()
     }
 
@@ -221,7 +234,26 @@ actual class CameraController(
     }
 
     actual fun getMaxZoomRatio(): Float {
-        return captureDevice?.activeFormat?.videoMaxZoomFactor?.toFloat() ?: 1.0f
+        val device = captureDevice ?: return 1.0f
+        val type = device.deviceType
+        val nativeMax = device.activeFormat.videoMaxZoomFactor.toFloat()
+
+        return if (type == AVCaptureDeviceTypeBuiltInTripleCamera || type == AVCaptureDeviceTypeBuiltInDualWideCamera) {
+            nativeMax / 2.0f
+        } else {
+            nativeMax
+        }
+    }
+
+    actual fun getMinZoomRatio(): Float {
+        val device = captureDevice ?: return 1.0f
+        val type = device.deviceType
+
+        return if (type == AVCaptureDeviceTypeBuiltInTripleCamera || type == AVCaptureDeviceTypeBuiltInDualWideCamera) {
+            0.5f
+        } else {
+            1.0f
+        }
     }
 }
 

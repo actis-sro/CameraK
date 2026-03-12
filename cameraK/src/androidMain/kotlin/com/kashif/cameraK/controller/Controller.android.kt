@@ -298,4 +298,9 @@ actual class CameraController(
         val zoomState = camera?.cameraInfo?.zoomState?.value
         return zoomState?.maxZoomRatio ?: 1.0f
     }
+
+    actual fun getMinZoomRatio(): Float {
+        val zoomState = camera?.cameraInfo?.zoomState?.value
+        return zoomState?.minZoomRatio ?: 1.0f
+    }
 }
