@@ -45,17 +45,28 @@ class CustomCameraController : NSObject(), AVCapturePhotoCaptureDelegateProtocol
 
     @OptIn(ExperimentalForeignApi::class)
     private fun setupInputs() {
+        val deviceTypes = listOf(
+            AVCaptureDeviceTypeBuiltInTripleCamera,
+            AVCaptureDeviceTypeBuiltInDualWideCamera,
+            AVCaptureDeviceTypeBuiltInDualCamera,
+            AVCaptureDeviceTypeBuiltInWideAngleCamera
+        )
 
         val availableDevices = AVCaptureDeviceDiscoverySession.discoverySessionWithDeviceTypes(
-            listOf(AVCaptureDeviceTypeBuiltInWideAngleCamera),
+            deviceTypes,
             AVMediaTypeVideo,
             AVCaptureDevicePositionUnspecified
         ).devices
 
         for (device in availableDevices) {
-            when ((device as AVCaptureDevice).position) {
-                AVCaptureDevicePositionBack -> backCamera = device
-                AVCaptureDevicePositionFront -> frontCamera = device
+            val captureDevice = device as AVCaptureDevice
+            when (captureDevice.position) {
+                AVCaptureDevicePositionBack -> {
+                    if (backCamera == null) backCamera = captureDevice
+                }
+                AVCaptureDevicePositionFront -> {
+                    if (frontCamera == null) frontCamera = captureDevice
+                }
             }
         }
 
